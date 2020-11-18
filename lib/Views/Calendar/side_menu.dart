@@ -23,18 +23,18 @@ class SideMenu extends StatelessWidget {
                     image: AssetImage('assets/images/background.png'))),
           ),
           ListTile(
-            leading: Icon(Icons.input),
-            title: Text('Welcome'),
+            leading: Icon(Icons.calendar_today),
+            title: Text('Calendar'),
             onTap: () => {},
           ),
           ListTile(
-            leading: Icon(Icons.verified_user),
-            title: Text('Profile'),
+            leading: Icon(Icons.check_box_outlined),
+            title: Text('To do'),
             onTap: () => {Navigator.of(context).pop()},
           ),
           ListTile(
-            leading: Icon(Icons.settings),
-            title: Text('Settings'),
+            leading: Icon(Icons.sticky_note_2_outlined),
+            title: Text('Notes'),
             onTap: () => {Navigator.of(context).pop()},
           ),
           ListTile(

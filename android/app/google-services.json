@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "540118831598",
+    "firebase_url": "https://calndar-io.firebaseio.com",
+    "project_id": "calndar-io",
+    "storage_bucket": "calndar-io.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:540118831598:android:85bb6c33ca213b4c133eff",
+        "android_client_info": {
+          "package_name": "com.example.Calendar_io"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "540118831598-emcpd5iatfcjt6m6nntmhmkejseqthdr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbKjv61dUedmN6-I-UHluJezHHPod4Hzs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "540118831598-emcpd5iatfcjt6m6nntmhmkejseqthdr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

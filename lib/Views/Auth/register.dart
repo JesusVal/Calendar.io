@@ -62,7 +62,7 @@ class _RegisterState extends State<Register> {
                     ]),
                     child: Column(
                       children: <Widget>[
-                        Container(
+                        /*Container(
                           padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
                               border: Border(
@@ -83,7 +83,7 @@ class _RegisterState extends State<Register> {
                               );
                             },
                           ),
-                        ),
+                        ),*/
                         Container(
                           padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
@@ -112,6 +112,7 @@ class _RegisterState extends State<Register> {
                             builder: (context, AsyncSnapshot<String> snapshot) {
                               return TextField(
                                 keyboardType: TextInputType.text,
+                                obscureText: true,
                                 maxLength: 20,
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
@@ -142,6 +143,7 @@ class _RegisterState extends State<Register> {
                   SizedBox(height: 20),
                   GestureDetector(
                     onTap: () {
+                      formBloc.createUser(context);
                       Navigator.of(context).pop();
                       //TODO: resolve register
                       Navigator.pushNamed(context, '/login');

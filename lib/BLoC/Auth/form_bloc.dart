@@ -1,6 +1,8 @@
+import 'package:Calendar_io/BLoC/Auth/authentification_service.dart';
 import 'package:Calendar_io/BLoC/Auth/validator_mixin.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:provider/provider.dart';
 
 class FormBloc with ValidationMixin {
   final _email = new BehaviorSubject<String>();
@@ -26,23 +28,24 @@ class FormBloc with ValidationMixin {
 
   //Rx.combineLatest2(email, password, (e, p) => true);
   //LogIn
-  bool submit() {
-    print('Login');
-    print(_email.value);
-    print(_password.value);
-    if ((_email.value == 'kzkz98@outlook.com') &&
-        (_password.value == 'pass1234')) {
-      return true;
-    } else {
-      return false;
-    }
+  void loginBLoC(BuildContext context) {
+    context.read<AuthenticationService>().loginFirebase(
+          email: _email.value,
+          password: _password.value,
+        );
   }
 
   //SignIn
-  createUser() {
-    print('User created');
-    print(_email.value);
-    print(_password.value);
+  void createUser(BuildContext context) {
+    context.read<AuthenticationService>().registerFirebase(
+          email: _email.value,
+          password: _password.value,
+        );
+  }
+
+  //logout
+  void singOut(BuildContext context) {
+    context.read<AuthenticationService>().singOutFirebase();
   }
 
   dispose() {

@@ -1,23 +1,29 @@
+import 'package:Calendar_io/BLoC/Auth/form_provider.dart';
 import 'package:Calendar_io/Views/Auth/forgotPassword.dart';
 import 'package:Calendar_io/Views/Auth/login.dart';
 import 'package:Calendar_io/Views/Auth/register.dart';
 import 'package:Calendar_io/Views/home.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Firebase.initializeApp();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Calendar.io',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+    return FormProvider(
+      child: MaterialApp(
+        title: 'Calendar.io',
+        theme: ThemeData(
+          primarySwatch: Colors.green,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        onGenerateRoute: onGenerateRoute,
       ),
-      onGenerateRoute: onGenerateRoute,
     );
   }
 

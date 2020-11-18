@@ -1,3 +1,5 @@
+import 'package:Calendar_io/BLoC/Auth/form_bloc.dart';
+import 'package:Calendar_io/BLoC/Auth/form_provider.dart';
 import 'package:flutter/material.dart';
 
 class Register extends StatefulWidget {
@@ -10,6 +12,8 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
+    final FormBloc formBloc = FormProvider.of(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -63,11 +67,21 @@ class _RegisterState extends State<Register> {
                           decoration: BoxDecoration(
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey[200]))),
-                          child: TextField(
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Username",
-                                hintStyle: TextStyle(color: Colors.grey)),
+                          child: StreamBuilder<String>(
+                            stream: formBloc.password,
+                            builder: (context, AsyncSnapshot<String> snapshot) {
+                              return TextField(
+                                keyboardType: TextInputType.text,
+                                maxLength: 20,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "Username",
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  errorText: snapshot.error,
+                                ),
+                                onChanged: formBloc.changePassword,
+                              );
+                            },
                           ),
                         ),
                         Container(
@@ -75,28 +89,45 @@ class _RegisterState extends State<Register> {
                           decoration: BoxDecoration(
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey[200]))),
-                          child: TextField(
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "e@mail.com",
-                                hintStyle: TextStyle(color: Colors.grey)),
+                          child: StreamBuilder<String>(
+                            stream: formBloc.email,
+                            builder: (context, AsyncSnapshot<String> snapshot) {
+                              return TextField(
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "e@mail.com",
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  errorText: snapshot.error,
+                                ),
+                                onChanged: formBloc.changeEmail,
+                              );
+                            },
                           ),
                         ),
                         Container(
                           padding: EdgeInsets.all(10),
-                          child: TextField(
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Password",
-                                hintStyle: TextStyle(color: Colors.grey)),
+                          child: StreamBuilder<String>(
+                            stream: formBloc.password,
+                            builder: (context, AsyncSnapshot<String> snapshot) {
+                              return TextField(
+                                keyboardType: TextInputType.text,
+                                maxLength: 20,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "Password",
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  errorText: snapshot.error,
+                                ),
+                                onChanged: formBloc.changePassword,
+                              );
+                            },
                           ),
                         )
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
+                  SizedBox(height: 20),
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).pop();
@@ -108,7 +139,7 @@ class _RegisterState extends State<Register> {
                       style: TextStyle(color: Color.fromRGBO(196, 135, 198, 1)),
                     )),
                   ),
-                  SizedBox(height: 40),
+                  SizedBox(height: 20),
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).pop();
@@ -130,7 +161,7 @@ class _RegisterState extends State<Register> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 40),
+                  SizedBox(height: 20),
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).pop();
@@ -141,7 +172,8 @@ class _RegisterState extends State<Register> {
                       "Already have an account",
                       style: TextStyle(color: Color.fromRGBO(49, 39, 79, .6)),
                     )),
-                  )
+                  ),
+                  SizedBox(height: 40),
                 ],
               ),
             )

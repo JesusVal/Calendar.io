@@ -1,3 +1,5 @@
+import 'package:Calendar_io/BLoC/Auth/form_bloc.dart';
+import 'package:Calendar_io/BLoC/Auth/form_provider.dart';
 import 'package:flutter/material.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -10,6 +12,8 @@ class ForgotPassword extends StatefulWidget {
 class _ForgotPasswordState extends State<ForgotPassword> {
   @override
   Widget build(BuildContext context) {
+    final FormBloc formBloc = FormProvider.of(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -63,11 +67,20 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           decoration: BoxDecoration(
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey[200]))),
-                          child: TextField(
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "e@mail.com",
-                                hintStyle: TextStyle(color: Colors.grey)),
+                          child: StreamBuilder<String>(
+                            stream: formBloc.password,
+                            builder: (context, AsyncSnapshot<String> snapshot) {
+                              return TextField(
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "e@mail.com",
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  errorText: snapshot.error,
+                                ),
+                                onChanged: formBloc.changePassword,
+                              );
+                            },
                           ),
                         ),
                       ],

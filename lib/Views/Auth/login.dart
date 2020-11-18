@@ -1,3 +1,5 @@
+import 'package:Calendar_io/BLoC/Auth/form_bloc.dart';
+import 'package:Calendar_io/BLoC/Auth/form_provider.dart';
 import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
@@ -10,7 +12,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
+    final FormBloc formBloc = FormProvider.of(context);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -65,20 +67,39 @@ class _LoginState extends State<Login> {
                           decoration: BoxDecoration(
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey[200]))),
-                          child: TextField(
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Username",
-                                hintStyle: TextStyle(color: Colors.grey)),
+                          child: StreamBuilder<String>(
+                            stream: formBloc.email,
+                            builder: (context, AsyncSnapshot<String> snapshot) {
+                              return TextField(
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "e@mail.com",
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  errorText: snapshot.error,
+                                ),
+                                onChanged: formBloc.changeEmail,
+                              );
+                            },
                           ),
                         ),
                         Container(
                           padding: EdgeInsets.all(10),
-                          child: TextField(
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Password",
-                                hintStyle: TextStyle(color: Colors.grey)),
+                          child: StreamBuilder<String>(
+                            stream: formBloc.password,
+                            builder: (context, AsyncSnapshot<String> snapshot) {
+                              return TextField(
+                                keyboardType: TextInputType.text,
+                                maxLength: 20,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: "Password",
+                                    hintStyle: TextStyle(color: Colors.grey),
+                                    errorText: snapshot.error),
+                                onChanged: formBloc.changePassword,
+                              );
+                            },
                           ),
                         )
                       ],

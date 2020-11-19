@@ -1,5 +1,6 @@
 import 'package:Calendar_io/BLoC/Auth/authentification_service.dart';
 import 'package:Calendar_io/BLoC/Auth/form_provider.dart';
+import 'package:Calendar_io/BLoC/Calendar/firestore_fucntions.dart';
 import 'package:Calendar_io/Views/Auth/forgotPassword.dart';
 import 'package:Calendar_io/Views/Auth/login.dart';
 import 'package:Calendar_io/Views/Auth/register.dart';
@@ -9,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -76,7 +78,11 @@ class AuthenticationWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     final firebaseUser = context.watch<User>();
 
+    // final db = FirestoreConections(context);
+
     if (firebaseUser != null) {
+      // print(firebaseUser.email);
+      // db.addEventCalendar('13', 't36');
       return Calendar();
     }
     return Login();

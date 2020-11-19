@@ -39,6 +39,9 @@ class _CalendarState extends State<Calendar> {
               TableCalendar(
                 calendarController: _calendarController,
                 startingDayOfWeek: StartingDayOfWeek.monday,
+                onDaySelected: (day, events, holidays) {
+                print("day- " + day.toIso8601String());
+                },
               ),
               SizedBox(height: 10),
               Container(
@@ -104,50 +107,17 @@ class _CalendarState extends State<Calendar> {
                         ),
                       ],
                     ),
-                    Positioned(
-                      bottom: 0,
-                      height: 200,
-                      width: MediaQuery.of(context).size.width,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: FractionalOffset.topCenter,
-                              end: FractionalOffset.bottomCenter,
-                              colors: [
-                                Colors.grey.withOpacity(0),
-                                Colors.deepPurple
-                              ],
-                              stops: [
-                                0.0,
-                                1.0
-                              ]),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 40,
-                      right: 20,
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                            color: Colors.blue,
-                            boxShadow: [
-                              BoxShadow(color: Colors.black38, blurRadius: 30)
-                            ]),
-                        child: Text('+',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 40,
-                            )),
-                      ),
-                    ),
                   ],
                 ),
               ),
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        backgroundColor: Colors.green,
+        // onPressed: _showAddDialog,
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'package:Calendar_io/BLoC/Auth/form_provider.dart';
 import 'package:Calendar_io/Views/Auth/forgotPassword.dart';
 import 'package:Calendar_io/Views/Auth/login.dart';
 import 'package:Calendar_io/Views/Auth/register.dart';
+import 'package:Calendar_io/Views/Calendar/calendar.dart';
 import 'package:Calendar_io/Views/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           title: 'Calendar.io',
           theme: ThemeData(
-            primarySwatch: Colors.green,
+            primarySwatch: Colors.deepPurple,
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
           home: AuthenticationWrapper(),
@@ -76,7 +77,7 @@ class AuthenticationWrapper extends StatelessWidget {
     final firebaseUser = context.watch<User>();
 
     if (firebaseUser != null) {
-      return Home();
+      return Calendar();
     }
     return Login();
   }

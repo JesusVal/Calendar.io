@@ -14,6 +14,12 @@ class Calendar extends StatefulWidget {
 
 class _CalendarState extends State<Calendar> {
   CalendarController _calendarController;
+  DateTime date = DateTime.now();
+  var getDataFunction;
+
+  TextEditingController _todoTextController = TextEditingController();
+  TimeOfDay _horario;
+  DateTime _fecha;
 
   @override
   void initState() {
@@ -29,7 +35,18 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
-    final FirestoreConections _conecction = FirestoreConections(context);
+    FirestoreConections _conecction = FirestoreConections(context);
+    Future getData(year, month, day) async {
+      return _conecction.getEventPerDate(year, month, day);
+    }
+
+    getDataFunction = getData(date.year, date.month, date.day);
+
+/*
+    Future getData() async {
+      DateTime date = DateTime.now();
+      return _conecction.getEventPerDate(date.year, date.month, date.day);
+    }*/
 
     return Scaffold(
       drawer: SideMenu(),
@@ -47,6 +64,9 @@ class _CalendarState extends State<Calendar> {
                   print("year- " + day.year.toString());
                   print("month- " + day.month.toString());
                   print("day- " + day.day.toString());
+                  setState(() {
+                    getDataFunction = getData(day.year, day.month, day.day);
+                  });
                 },
               ),
               SizedBox(height: 10),
@@ -62,63 +82,7 @@ class _CalendarState extends State<Calendar> {
                 ),
                 child: Stack(
                   children: <Widget>[
-                    ListView(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(top: 40),
-                          child: Text('Todayy',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                              )),
-                        ),
-                        //Tasks
-                        Expanded(
-                            child: SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.75,
-                          child: CalendarListEvents(),
-                        ))
-                        /*
-                        Container(
-                          padding: EdgeInsets.only(top: 10),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                CupertinoIcons.check_mark_circled_solid,
-                                color: Colors.red,
-                                size: 30,
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(left: 10, right: 10),
-                                width: MediaQuery.of(context).size.width * 0.8,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      'Data1',
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white),
-                                    ),
-                                    SizedBox(height: 10),
-                                    Text(
-                                      'description descripting things descripted',
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.normal,
-                                          color: Colors.white),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),*/
-                      ],
-                    ),
+                    CalendarListEvents(getDataFunction),
                   ],
                 ),
               ),
@@ -126,12 +90,157 @@ class _CalendarState extends State<Calendar> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
+          await showModalBottomSheet(
+            context: context,
+            builder: (context) => StatefulBuilder(
+              // para refrescar la botton sheet en caso de ser necesario
+              builder: (context, setModalState) =>
+                  _bottomSheet(context, setModalState),
+            ),
+            isScrollControlled: true,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(15.0),
+                topRight: Radius.circular(15.0),
+              ),
+            ),
+          ).then(
+            (result) {
+              if (result != null) {
+                // DIDIT: bloc add evento to add reminder to db
+                // DIDIT: add reminder to HomeBody list view
+                // _homeBloc.add(OnAddElementEvent(todoReminder: result));
+              }
+            },
+          );
+        },
+        label: Text("Agregar"),
+        icon: Icon(Icons.add_circle),
+      ),
+
+      /*FloatingActionButton(
         child: Icon(Icons.add),
         backgroundColor: Colors.green,
         onPressed: () => _conecction.printTest(),
         // db.addEventCalendar('13', 't36');
+      ),*/
+    );
+  }
+
+  Widget _bottomSheet(BuildContext context, StateSetter setModalState) {
+    return Padding(
+      padding: EdgeInsets.only(
+        top: 24.0,
+        left: 24,
+        right: 24,
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Container(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              "Agrega recordatorio",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+            SizedBox(
+              height: 24,
+            ),
+            TextField(
+              controller: _todoTextController,
+              decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.text_fields,
+                  color: Colors.black,
+                ),
+                labelText: "Ingrese actividad",
+                labelStyle: TextStyle(color: Colors.black87),
+                border: OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(
+              height: 12,
+            ),
+            Row(
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.timer),
+                  onPressed: () {
+                    _selectTime(context);
+                    // refreshes modal bottom sheet with new hour value
+                    setModalState(() {});
+                  },
+                ),
+                Text(
+                  _horario == null
+                      ? "Seleccione horario"
+                      : "${_horario.hour}:${_horario.minute}",
+                ),
+              ],
+            ),
+            SizedBox(height: 12),
+            Row(
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.timer),
+                  onPressed: () {
+                    _selectDateTime(context);
+                    // refreshes modal bottom sheet with new hour value
+                    setModalState(() {});
+                  },
+                ),
+                Text(
+                  _horario == null ? "Seleccione una fecha" : "not null",
+                ),
+              ],
+            ),
+            SizedBox(height: 12),
+            MaterialButton(
+              child: Text("Guardar"),
+              onPressed: () {
+                _todoTextController.clear();
+                _horario = null;
+              },
+            ),
+            SizedBox(
+              height: 24,
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  _selectTime(BuildContext context) async {
+    await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    ).then(
+      (time) {
+        if (time != null) {
+          _horario = time;
+        }
+      },
+    );
+  }
+
+  _selectDateTime(BuildContext context) async {
+    await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2025),
+    ).then((date) {
+      if (date != null) {
+        _fecha = date;
+      }
+    });
   }
 }

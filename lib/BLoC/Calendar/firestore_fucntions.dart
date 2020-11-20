@@ -15,77 +15,60 @@ class FirestoreConections {
     this._firestore = FirebaseFirestore.instance.collection(this._firebaseUser);
   }
 
-  void initDocument(description, time) {
-    this
-        ._firestore
-        .doc(this._firebaseUser)
-        .set({"status": 'active'}).then((value) {
-      print('document created');
-      addEventCalendar(description, time, false);
-    }).catchError((e) => print('somethin failed: $e'));
-  }
-
-/*
-  void addEventCalendar(description, time, [created = true]) {
+  void addEventCalendar(year, month, day, description, time) {
     var uid = Uuid();
     var uuid = uid.v4();
     this
         ._firestore
-        .doc(this._firebaseUser)
-        .update({
-          "$uuid": {'description': description, 'time': time}
+        .doc(uuid)
+        .set({
+          'uuid': uuid,
+          'day': day,
+          'month': month,
+          'year': year,
+          'description': description,
+          'time': time,
         })
         .then((value) => print('added'))
         .catchError((e) {
-          if (e.code == 'not-found' && created == true) {
-            print('im in');
-            initDocument(description, time);
-          } else {
-            print("Something went wrong: $e");
-          }
-        });
-  }
-*/
-  void addEventCalendar(description, time, [created = true]) {
-    var uid = Uuid();
-    var uuid = uid.v4();
-    this
-        ._firestore
-        .add({'uuid': uuid, 'description': description, 'time': time})
-        .then((value) => print('added'))
-        .catchError((e) {
-          print("Something went wrong: $e");
+          print("Something went wrong in add: $e");
         });
   }
 
-  void updateEventCalendar(description, time, uid) {
+  void updateEventCalendar(uuid, year, month, day, description, time) {
     this
         ._firestore
-        .doc(this._firebaseUser)
+        .doc(uuid)
         .update({
-          "$uid": {'description': description, 'time': time}
+          'day': day,
+          'month': month,
+          'year': year,
+          'description': description,
+          'time': time,
         })
-        .then((value) => print('added'))
-        .catchError((e) => print('somethin failed: $e'));
+        .then((value) => print('Document updated'))
+        .catchError((e) => print('somethin failed in update: $e'));
   }
 
-  void deleteEventCalendar(uid) {
+  void deleteEventCalendar(uuid) {
     this
         ._firestore
-        .doc(this._firebaseUser)
-        .update({"$uid": FieldValue.delete()})
-        .then((value) => print('added'))
-        .catchError((e) => print('somethin failed: $e'));
+        .doc(uuid)
+        .delete()
+        .then((value) => print('Succefully deleted'))
+        .catchError((e) => print('somethin failed in delete: $e'));
   }
 
-  void getEventPerDate(year, month, day) {
-    this
+  Future getEventPerDate(year, month, day) async {
+    print(year);
+    print(month);
+    print(day);
+    return this
         ._firestore
-        .where('year', isEqualTo: year)
-        .where('month', isEqualTo: month)
-        .where('day', isEqualTo: day)
-        .get()
-        .then((value) => print(value.docs[0].data().toString()));
+        .where('year', isEqualTo: year.toString())
+        .where('month', isEqualTo: month.toString())
+        .where('day', isEqualTo: day.toString())
+        .get();
   }
 
   void printTest() {
@@ -95,10 +78,11 @@ class FirestoreConections {
         // .where(this._firebaseUser,arrayContains: {'description': "13", 'time': "t3"})
         .where("time", isEqualTo: "t36")
         .get()
-        .then((elem) {}
+        .then((elem) {
+      print(elem.docs);
+    }
             //  elem.docs.forEach((element) {print(element.data());})
-            )
-        .catchError((e) => print('somethin failed: $e'));
+            ).catchError((e) => print('somethin failed: $e'));
     print('printing');
   }
 }

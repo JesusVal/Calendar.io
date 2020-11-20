@@ -1,7 +1,9 @@
+import 'package:Calendar_io/Views/Calendar/calendar_list_events.dart';
 import 'package:Calendar_io/Views/Calendar/side_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:Calendar_io/BLoC/Calendar/firestore_fucntions.dart';
 
 class Calendar extends StatefulWidget {
   Calendar({Key key}) : super(key: key);
@@ -27,6 +29,8 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
+    final FirestoreConections _conecction = FirestoreConections(context);
+
     return Scaffold(
       drawer: SideMenu(),
       appBar: AppBar(
@@ -40,14 +44,16 @@ class _CalendarState extends State<Calendar> {
                 calendarController: _calendarController,
                 startingDayOfWeek: StartingDayOfWeek.monday,
                 onDaySelected: (day, events, holidays) {
-                print("day- " + day.toIso8601String());
+                  print("year- " + day.year.toString());
+                  print("month- " + day.month.toString());
+                  print("day- " + day.day.toString());
                 },
               ),
               SizedBox(height: 10),
               Container(
                 padding: EdgeInsets.only(left: 30),
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.55,
+                height: MediaQuery.of(context).size.height * 0.85,
                 decoration: BoxDecoration(
                   color: Colors.deepPurple,
                   borderRadius: BorderRadius.only(
@@ -56,12 +62,12 @@ class _CalendarState extends State<Calendar> {
                 ),
                 child: Stack(
                   children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    ListView(
+                      // crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.only(top: 40),
-                          child: Text('Today',
+                          child: Text('Todayy',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 30,
@@ -69,6 +75,12 @@ class _CalendarState extends State<Calendar> {
                               )),
                         ),
                         //Tasks
+                        Expanded(
+                            child: SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.75,
+                          child: CalendarListEvents(),
+                        ))
+                        /*
                         Container(
                           padding: EdgeInsets.only(top: 10),
                           child: Row(
@@ -104,7 +116,7 @@ class _CalendarState extends State<Calendar> {
                               ),
                             ],
                           ),
-                        ),
+                        ),*/
                       ],
                     ),
                   ],
@@ -117,7 +129,8 @@ class _CalendarState extends State<Calendar> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         backgroundColor: Colors.green,
-        // onPressed: _showAddDialog,
+        onPressed: () => _conecction.printTest(),
+        // db.addEventCalendar('13', 't36');
       ),
     );
   }

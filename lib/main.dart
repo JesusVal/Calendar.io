@@ -5,6 +5,7 @@ import 'package:Calendar_io/Views/Auth/forgotPassword.dart';
 import 'package:Calendar_io/Views/Auth/login.dart';
 import 'package:Calendar_io/Views/Auth/register.dart';
 import 'package:Calendar_io/Views/Calendar/calendar.dart';
+import 'package:Calendar_io/Views/Calendar/to_do_list.dart';
 import 'package:Calendar_io/Views/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -63,9 +64,11 @@ class MyApp extends StatelessWidget {
       // return null;
     }
 
-    if (routeSettings.name == '/calendar') {
-      return null;
-      // return MaterialPageRoute(builder: (_) => CalendarView());
+    if (routeSettings.name == '/Calendar') {
+      return MaterialPageRoute(builder: (_) => Calendar());
+    }
+    if (routeSettings.name == '/ToDo') {
+      return MaterialPageRoute(builder: (_) => ToDoList());
     }
 
     // return MaterialPageRoute(builder: (_) => Login());

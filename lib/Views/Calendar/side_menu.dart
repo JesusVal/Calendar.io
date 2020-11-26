@@ -14,10 +14,10 @@ class SideMenu extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
-            child: Text('sidemenu',
+            child: Text('Calendar.io',
                 style: TextStyle(color: Colors.white, fontSize: 25)),
             decoration: BoxDecoration(
-                color: Colors.green,
+                color: Colors.deepPurple,
                 image: DecorationImage(
                     fit: BoxFit.fill,
                     image: AssetImage('assets/images/background.png'))),
@@ -25,12 +25,20 @@ class SideMenu extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.calendar_today),
             title: Text('Calendar'),
-            onTap: () => {},
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              Navigator.pushNamed(context, '/Calendar');
+            },
           ),
           ListTile(
             leading: Icon(Icons.check_box_outlined),
             title: Text('To do'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              Navigator.pushNamed(context, '/ToDo');
+            },
           ),
           ListTile(
             leading: Icon(Icons.sticky_note_2_outlined),

@@ -60,9 +60,7 @@ class FirestoreConections {
   }
 
   Future getEventPerDate(year, month, day) async {
-    print(year);
-    print(month);
-    print(day);
+    print('Consulting event per day');
     return this
         ._firestore
         .where('year', isEqualTo: year.toString())

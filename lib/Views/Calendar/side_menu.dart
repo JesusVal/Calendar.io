@@ -43,7 +43,11 @@ class SideMenu extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.sticky_note_2_outlined),
             title: Text('Notes'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              Navigator.pushNamed(context, '/Notes');
+            },
           ),
           ListTile(
             leading: Icon(Icons.border_color),

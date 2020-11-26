@@ -2,17 +2,15 @@ import 'package:Calendar_io/Views/Calendar/side_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class ToDoList extends StatefulWidget {
-  ToDoList({Key key}) : super(key: key);
+class NotesList extends StatefulWidget {
+  NotesList({Key key}) : super(key: key);
 
   @override
-  _ToDoListState createState() => _ToDoListState();
+  _NotesListState createState() => _NotesListState();
 }
 
-class _ToDoListState extends State<ToDoList> {
-  TextEditingController _todoDescriptionTextController =
-      TextEditingController();
-  TextEditingController _todoTitleTextController = TextEditingController();
+class _NotesListState extends State<NotesList> {
+  TextEditingController _notesTextController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +40,7 @@ class _ToDoListState extends State<ToDoList> {
             top: 20,
             left: 20,
             child: Text(
-              'To Do List',
+              'Notes',
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -70,17 +68,10 @@ class _ToDoListState extends State<ToDoList> {
                       itemBuilder: (context, index) {
                         return ListTile(
                           title: Text(
-                            "Task no $index",
+                            "Note no $index",
                             style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black),
-                          ),
-                          subtitle: Text(
-                            "description of $index",
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.normal,
                                 color: Colors.black),
                           ),
                           trailing: Icon(
@@ -114,9 +105,7 @@ class _ToDoListState extends State<ToDoList> {
                         ).then(
                           (result) {
                             if (result != null) {
-                              // DIDIT: bloc add evento to add reminder to db
-                              // DIDIT: add reminder to HomeBody list view
-                              // _homeBloc.add(OnAddElementEvent(todoReminder: result));
+                              // TODO: add notes
                             }
                           },
                         );
@@ -151,7 +140,7 @@ class _ToDoListState extends State<ToDoList> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Text(
-              "Add task",
+              "Add Note",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -161,29 +150,13 @@ class _ToDoListState extends State<ToDoList> {
               height: 24,
             ),
             TextField(
-              controller: _todoTitleTextController,
+              controller: _notesTextController,
               decoration: InputDecoration(
                 prefixIcon: Icon(
                   Icons.text_fields,
                   color: Colors.black,
                 ),
-                labelText: "Title",
-                labelStyle: TextStyle(color: Colors.black87),
-                border: OutlineInputBorder(),
-                focusedBorder: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            TextField(
-              controller: _todoDescriptionTextController,
-              decoration: InputDecoration(
-                prefixIcon: Icon(
-                  Icons.text_fields,
-                  color: Colors.black,
-                ),
-                labelText: "Description",
+                labelText: "Tell me",
                 labelStyle: TextStyle(color: Colors.black87),
                 border: OutlineInputBorder(),
                 focusedBorder: OutlineInputBorder(),
@@ -194,8 +167,7 @@ class _ToDoListState extends State<ToDoList> {
               child: Text("Save"),
               onPressed: () {
                 Navigator.of(context).pop();
-                _todoTitleTextController.clear();
-                _todoDescriptionTextController.clear();
+                _notesTextController.clear();
               },
             ),
             SizedBox(

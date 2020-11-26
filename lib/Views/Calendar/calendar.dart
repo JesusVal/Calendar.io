@@ -204,7 +204,7 @@ class _CalendarState extends State<Calendar> {
             ),
             SizedBox(height: 12),
             MaterialButton(
-              child: Text("Guardar"),
+              child: Text("Save"),
               onPressed: () {
                 _todoTextController.clear();
                 _horario = null;

@@ -66,18 +66,28 @@ class _NotesListState extends State<NotesList> {
                       controller: scrollController,
                       itemCount: 20,
                       itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(
-                            "Note no $index",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black),
+                        return Dismissible(
+                          key: UniqueKey(),
+                          background: Container(
+                            color: Colors.indigo,
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
                           ),
-                          trailing: Icon(
-                            CupertinoIcons.check_mark_circled_solid,
-                            color: Colors.green,
-                            size: 30,
+                          child: ListTile(
+                            title: Text(
+                              "Note no $index",
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black),
+                            ),
+                            trailing: Icon(
+                              CupertinoIcons.news,
+                              color: Colors.green,
+                              size: 30,
+                            ),
                           ),
                         );
                       },

@@ -68,25 +68,35 @@ class _ToDoListState extends State<ToDoList> {
                       controller: scrollController,
                       itemCount: 20,
                       itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(
-                            "Task no $index",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black),
+                        return Dismissible(
+                          key: UniqueKey(),
+                          background: Container(
+                            color: Colors.indigo,
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
                           ),
-                          subtitle: Text(
-                            "description of $index",
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.black),
-                          ),
-                          trailing: Icon(
-                            CupertinoIcons.check_mark_circled_solid,
-                            color: Colors.green,
-                            size: 30,
+                          child: ListTile(
+                            title: Text(
+                              "Task no $index",
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black),
+                            ),
+                            subtitle: Text(
+                              "description of $index",
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black),
+                            ),
+                            trailing: Icon(
+                              CupertinoIcons.check_mark_circled_solid,
+                              color: Colors.green,
+                              size: 30,
+                            ),
                           ),
                         );
                       },

@@ -15,7 +15,7 @@ class Calendar extends StatefulWidget {
 class _CalendarState extends State<Calendar> {
   CalendarController _calendarController;
   DateTime date = DateTime.now();
-  var getDataFunction;
+  Future<dynamic> getDataFunction;
 
   TextEditingController _todoTextController = TextEditingController();
   TimeOfDay _horario;
@@ -36,11 +36,13 @@ class _CalendarState extends State<Calendar> {
   @override
   Widget build(BuildContext context) {
     FirestoreConections _conecction = FirestoreConections(context);
-    Future getData(year, month, day) async {
+    Future<dynamic> getData(year, month, day) async {
       return _conecction.getEventPerDate(year, month, day);
     }
 
-    getDataFunction = getData(date.year, date.month, date.day);
+    if (getDataFunction == null) {
+      getDataFunction = getData(date.year, date.month, date.day);
+    }
 
 /*
     Future getData() async {
@@ -71,22 +73,110 @@ class _CalendarState extends State<Calendar> {
               ),
               SizedBox(height: 10),
               Container(
-                padding: EdgeInsets.only(left: 30),
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.85,
-                decoration: BoxDecoration(
-                  color: Colors.deepPurple,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(40),
-                    topRight: Radius.circular(40),
+                  padding: EdgeInsets.only(left: 30),
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.85,
+                  decoration: BoxDecoration(
+                    color: Colors.deepPurple,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(40),
+                      topRight: Radius.circular(40),
+                    ),
                   ),
-                ),
-                child: Stack(
-                  children: <Widget>[
-                    CalendarListEvents(getDataFunction),
-                  ],
-                ),
-              ),
+                  child: FutureBuilder(
+                    future: Future.wait([
+                      getDataFunction,
+                    ]),
+                    builder: (_, AsyncSnapshot<List<dynamic>> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: Text(
+                            'Loading',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        );
+                      } else {
+                        if (snapshot.hasData) {
+                          return ListView.builder(
+                            itemCount: snapshot.data[0].docs.length + 1,
+                            itemBuilder: (_, index) {
+                              if (index == 0) {
+                                return Container(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(top: 20),
+                                    child: Text('Today',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.bold,
+                                        )),
+                                  ),
+                                );
+                              }
+                              index -= 1;
+
+                              return Dismissible(
+                                key: UniqueKey(),
+                                background: Container(
+                                  color: Colors.indigo,
+                                  child: Icon(
+                                    Icons.delete,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                child: Container(
+                                  padding: EdgeInsets.only(top: 10),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        CupertinoIcons.check_mark_circled_solid,
+                                        color: Colors.red,
+                                        size: 30,
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.only(
+                                            left: 10, right: 10),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.8,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              snapshot.data[0].docs[index]
+                                                  .get('time'),
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            ),
+                                            SizedBox(height: 10),
+                                            Text(
+                                              snapshot.data[0].docs[index]
+                                                  .get('description'),
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: Colors.white),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        } else {
+                          return Center(
+                            child: Text("No events found."),
+                          );
+                        }
+                      }
+                    },
+                  )),
             ],
           ),
         ),

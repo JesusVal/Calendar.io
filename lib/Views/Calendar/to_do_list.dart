@@ -101,56 +101,190 @@ class _ToDoListState extends State<ToDoList> {
                                   }
                                   index -= 1;
 
-                                  return Dismissible(
-                                    key: UniqueKey(),
-                                    background: Container(
-                                      color: Colors.indigo,
-                                      child: Icon(
-                                        Icons.delete,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    child: ListTile(
-                                      title: Text(
-                                        snapshot.data.docs[index].get('title'),
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black),
-                                      ),
-                                      subtitle: Text(
-                                        snapshot.data.docs[index]
-                                            .get('description'),
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.normal,
-                                            color: Colors.black),
-                                      ),
-                                      trailing: IconButton(
-                                        icon: Icon(
-                                          CupertinoIcons.circle_fill,
-                                          color: (snapshot.data.docs[index]
-                                                  .get('status'))
-                                              ? Colors.green
-                                              : Colors.red,
-                                          size: 30,
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            _conecction.changeTaskStatus(
-                                                snapshot.data.docs[index]
-                                                    .get('uuid'),
-                                                snapshot.data.docs[index]
-                                                    .get('status'));
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                    onDismissed: (direction) {
-                                      _conecction.deleteTask(snapshot
+                                  return GestureDetector(
+                                    onDoubleTap: () async {
+                                      _todoTitleTextController.text = snapshot
                                           .data.docs[index]
-                                          .get('uuid'));
+                                          .get('title');
+                                      _todoDescriptionTextController.text =
+                                          snapshot.data.docs[index]
+                                              .get('description');
+
+                                      await showModalBottomSheet(
+                                        context: context,
+                                        builder: (context) => StatefulBuilder(
+                                            // para refrescar la botton sheet en caso de ser necesario
+                                            builder: (context, setModalState) {
+                                          return Padding(
+                                            padding: EdgeInsets.only(
+                                              top: 24.0,
+                                              left: 24,
+                                              right: 24,
+                                              bottom: MediaQuery.of(context)
+                                                  .viewInsets
+                                                  .bottom,
+                                            ),
+                                            child: Container(
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Text(
+                                                    "Update task",
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 24,
+                                                  ),
+                                                  TextField(
+                                                    controller:
+                                                        _todoTitleTextController,
+                                                    decoration: InputDecoration(
+                                                      prefixIcon: Icon(
+                                                        Icons.text_fields,
+                                                        color: Colors.black,
+                                                      ),
+                                                      labelText: "Title",
+                                                      labelStyle: TextStyle(
+                                                          color:
+                                                              Colors.black87),
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      focusedBorder:
+                                                          OutlineInputBorder(),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 12,
+                                                  ),
+                                                  TextField(
+                                                    controller:
+                                                        _todoDescriptionTextController,
+                                                    decoration: InputDecoration(
+                                                      prefixIcon: Icon(
+                                                        Icons.text_fields,
+                                                        color: Colors.black,
+                                                      ),
+                                                      labelText: "Description",
+                                                      labelStyle: TextStyle(
+                                                          color:
+                                                              Colors.black87),
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      focusedBorder:
+                                                          OutlineInputBorder(),
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 12),
+                                                  MaterialButton(
+                                                    child: Text("Save"),
+                                                    onPressed: () {
+                                                      if (_todoTitleTextController
+                                                                  .text !=
+                                                              '' &&
+                                                          _todoDescriptionTextController
+                                                                  .text !=
+                                                              '') {
+                                                        _conecction.updateTask(
+                                                            snapshot.data
+                                                                .docs[index]
+                                                                .get('uuid'),
+                                                            _todoTitleTextController
+                                                                .text,
+                                                            _todoDescriptionTextController
+                                                                .text);
+
+                                                        _todoTitleTextController
+                                                            .clear();
+                                                        _todoDescriptionTextController
+                                                            .clear();
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      }
+                                                    },
+                                                  ),
+                                                  SizedBox(
+                                                    height: 24,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        }),
+                                        isScrollControlled: true,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(15.0),
+                                            topRight: Radius.circular(15.0),
+                                          ),
+                                        ),
+                                      ).then(
+                                        (result) {
+                                          if (result != null) {
+                                            // DIDIT: bloc add evento to add reminder to db
+                                            // DIDIT: add reminder to HomeBody list view
+                                            // _homeBloc.add(OnAddElementEvent(todoReminder: result));
+                                          }
+                                        },
+                                      );
                                     },
+                                    child: Dismissible(
+                                      key: UniqueKey(),
+                                      background: Container(
+                                        color: Colors.indigo,
+                                        child: Icon(
+                                          Icons.delete,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      child: ListTile(
+                                        title: Text(
+                                          snapshot.data.docs[index]
+                                              .get('title'),
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black),
+                                        ),
+                                        subtitle: Text(
+                                          snapshot.data.docs[index]
+                                              .get('description'),
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.normal,
+                                              color: Colors.black),
+                                        ),
+                                        trailing: IconButton(
+                                          icon: Icon(
+                                            CupertinoIcons.circle_fill,
+                                            color: (snapshot.data.docs[index]
+                                                    .get('status'))
+                                                ? Colors.green
+                                                : Colors.red,
+                                            size: 30,
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              _conecction.changeTaskStatus(
+                                                  snapshot.data.docs[index]
+                                                      .get('uuid'),
+                                                  snapshot.data.docs[index]
+                                                      .get('status'));
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                      onDismissed: (direction) {
+                                        _conecction.deleteTask(snapshot
+                                            .data.docs[index]
+                                            .get('uuid'));
+                                      },
+                                    ),
                                   );
                                 },
                               );

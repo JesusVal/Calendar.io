@@ -32,6 +32,15 @@ class FirestoreConectionsNotes {
         });
   }
 
+  void updateTask(uuid, note) {
+    this
+        ._firestore
+        .doc(uuid)
+        .update({'note': note})
+        .then((value) => print("Task text updated"))
+        .catchError((e) => print("Something failed in updated $e"));
+  }
+
   void deleteNote(uuid) {
     this
         ._firestore

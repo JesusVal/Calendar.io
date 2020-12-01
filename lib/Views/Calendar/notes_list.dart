@@ -98,34 +98,139 @@ class _NotesListState extends State<NotesList> {
                                     }
                                     index -= 1;
 
-                                    return Dismissible(
-                                      key: UniqueKey(),
-                                      background: Container(
-                                        color: Colors.indigo,
-                                        child: Icon(
-                                          Icons.delete,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      child: ListTile(
-                                        subtitle: Text(
-                                          snapshot.data.docs[index].get('note'),
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.normal,
-                                              color: Colors.black),
-                                        ),
-                                        trailing: Icon(
-                                          CupertinoIcons.news,
-                                          color: Colors.green,
-                                          size: 30,
-                                        ),
-                                      ),
-                                      onDismissed: (direction) {
-                                        _conecction.deleteNote(snapshot
+                                    return GestureDetector(
+                                      onDoubleTap: () async {
+                                        _notesTextController.text = snapshot
                                             .data.docs[index]
-                                            .get('uuid'));
+                                            .get('note');
+
+                                        await showModalBottomSheet(
+                                          context: context,
+                                          builder: (context) => StatefulBuilder(
+                                              // para refrescar la botton sheet en caso de ser necesario
+                                              builder:
+                                                  (context, setModalState) {
+                                            return Padding(
+                                              padding: EdgeInsets.only(
+                                                top: 24.0,
+                                                left: 24,
+                                                right: 24,
+                                                bottom: MediaQuery.of(context)
+                                                    .viewInsets
+                                                    .bottom,
+                                              ),
+                                              child: Container(
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      "Udate Note",
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 18,
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 24,
+                                                    ),
+                                                    TextField(
+                                                      controller:
+                                                          _notesTextController,
+                                                      decoration:
+                                                          InputDecoration(
+                                                        prefixIcon: Icon(
+                                                          Icons.text_fields,
+                                                          color: Colors.black,
+                                                        ),
+                                                        labelText: "Tell me",
+                                                        labelStyle: TextStyle(
+                                                            color:
+                                                                Colors.black87),
+                                                        border:
+                                                            OutlineInputBorder(),
+                                                        focusedBorder:
+                                                            OutlineInputBorder(),
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 12),
+                                                    MaterialButton(
+                                                      child: Text("Update"),
+                                                      onPressed: () {
+                                                        if (_notesTextController
+                                                                .text !=
+                                                            '') {
+                                                          _conecction.updateTask(
+                                                              snapshot.data
+                                                                  .docs[index]
+                                                                  .get('uuid'),
+                                                              _notesTextController
+                                                                  .text);
+                                                          _notesTextController
+                                                              .clear();
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        }
+                                                      },
+                                                    ),
+                                                    SizedBox(
+                                                      height: 24,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                              // _bottomSheet(context, setModalState),
+                                              ),
+                                          isScrollControlled: true,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(15.0),
+                                              topRight: Radius.circular(15.0),
+                                            ),
+                                          ),
+                                        ).then(
+                                          (result) {
+                                            if (result != null) {
+                                              // TODO: add notes
+                                            }
+                                          },
+                                        );
                                       },
+                                      child: Dismissible(
+                                        key: UniqueKey(),
+                                        background: Container(
+                                          color: Colors.indigo,
+                                          child: Icon(
+                                            Icons.delete,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        child: ListTile(
+                                          subtitle: Text(
+                                            snapshot.data.docs[index]
+                                                .get('note'),
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.normal,
+                                                color: Colors.black),
+                                          ),
+                                          trailing: Icon(
+                                            CupertinoIcons.news,
+                                            color: Colors.green,
+                                            size: 30,
+                                          ),
+                                        ),
+                                        onDismissed: (direction) {
+                                          _conecction.deleteNote(snapshot
+                                              .data.docs[index]
+                                              .get('uuid'));
+                                        },
+                                      ),
                                     );
                                   },
                                 );

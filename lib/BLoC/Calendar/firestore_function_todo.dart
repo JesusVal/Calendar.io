@@ -43,6 +43,18 @@ class FirestoreConectionsTODO {
         .catchError((e) => print('somethin failed in update: $e'));
   }
 
+  void updateTask(uuid, title, description) {
+    this
+        ._firestore
+        .doc(uuid)
+        .update({
+          'title': title,
+          'description': description,
+        })
+        .then((value) => print("Task text updated"))
+        .catchError((e) => print("Something failed in updated $e"));
+  }
+
   void deleteTask(uuid) {
     this
         ._firestore

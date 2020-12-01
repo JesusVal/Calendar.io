@@ -44,12 +44,6 @@ class _CalendarState extends State<Calendar> {
       getDataFunction = getData(date.year, date.month, date.day);
     }
 
-/*
-    Future getData() async {
-      DateTime date = DateTime.now();
-      return _conecction.getEventPerDate(date.year, date.month, date.day);
-    }*/
-
     return Scaffold(
       drawer: SideMenu(),
       appBar: AppBar(
@@ -166,6 +160,10 @@ class _CalendarState extends State<Calendar> {
                                     ],
                                   ),
                                 ),
+                                onDismissed: (direction) {
+                                  _conecction.deleteEventCalendar(
+                                      snapshot.data[0].docs[index].get('uuid'));
+                                },
                               );
                             },
                           );
@@ -186,10 +184,112 @@ class _CalendarState extends State<Calendar> {
           await showModalBottomSheet(
             context: context,
             builder: (context) => StatefulBuilder(
-              // para refrescar la botton sheet en caso de ser necesario
-              builder: (context, setModalState) =>
-                  _bottomSheet(context, setModalState),
-            ),
+                // para refrescar la botton sheet en caso de ser necesario
+                builder: (context, setModalState) {
+              return Padding(
+                padding: EdgeInsets.only(
+                  top: 24.0,
+                  left: 24,
+                  right: 24,
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: Container(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "Add event",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 24,
+                      ),
+                      TextField(
+                        controller: _todoTextController,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.text_fields,
+                            color: Colors.black,
+                          ),
+                          labelText: "Add activity",
+                          labelStyle: TextStyle(color: Colors.black87),
+                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          IconButton(
+                            icon: Icon(Icons.timer),
+                            onPressed: () {
+                              _selectTime(context);
+                              // refreshes modal bottom sheet with new hour value
+                              setModalState(() {});
+                            },
+                          ),
+                          Text(
+                            _horario == null
+                                ? "Select an hour"
+                                : _horario.toString(),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 12),
+                      Row(
+                        children: <Widget>[
+                          IconButton(
+                            icon: Icon(Icons.timer),
+                            onPressed: () {
+                              _selectDateTime(context);
+                              // refreshes modal bottom sheet with new hour value
+                              setModalState(() {});
+                            },
+                          ),
+                          Text(
+                            _fecha == null
+                                ? "Select a date"
+                                : _fecha.toString(),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 12),
+                      MaterialButton(
+                        child: Text("Save"),
+                        onPressed: () {
+                          if (_todoTextController.text != '' &&
+                              _horario != null &&
+                              _fecha != null) {
+                            var hourformat = _horario.hour;
+                            var moniteformat = _horario.minute;
+                            var formatedtime = "$hourformat:$moniteformat";
+                            _conecction.addEventCalendar(
+                                _fecha.year.toString(),
+                                _fecha.month.toString(),
+                                _fecha.day.toString(),
+                                _todoTextController.text,
+                                formatedtime);
+                            _todoTextController.clear();
+                            _horario = null;
+                            _fecha = null;
+                            Navigator.of(context).pop();
+                          }
+                        },
+                      ),
+                      SizedBox(
+                        height: 24,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
             isScrollControlled: true,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
@@ -207,104 +307,8 @@ class _CalendarState extends State<Calendar> {
             },
           );
         },
-        label: Text("Agregar"),
+        label: Text("Add"),
         icon: Icon(Icons.add_circle),
-      ),
-
-      /*FloatingActionButton(
-        child: Icon(Icons.add),
-        backgroundColor: Colors.green,
-        onPressed: () => _conecction.printTest(),
-        // db.addEventCalendar('13', 't36');
-      ),*/
-    );
-  }
-
-  Widget _bottomSheet(BuildContext context, StateSetter setModalState) {
-    return Padding(
-      padding: EdgeInsets.only(
-        top: 24.0,
-        left: 24,
-        right: 24,
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: Container(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              "Agrega recordatorio",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
-            SizedBox(
-              height: 24,
-            ),
-            TextField(
-              controller: _todoTextController,
-              decoration: InputDecoration(
-                prefixIcon: Icon(
-                  Icons.text_fields,
-                  color: Colors.black,
-                ),
-                labelText: "Ingrese actividad",
-                labelStyle: TextStyle(color: Colors.black87),
-                border: OutlineInputBorder(),
-                focusedBorder: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            Row(
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.timer),
-                  onPressed: () {
-                    _selectTime(context);
-                    // refreshes modal bottom sheet with new hour value
-                    setModalState(() {});
-                  },
-                ),
-                Text(
-                  _horario == null
-                      ? "Seleccione horario"
-                      : "${_horario.hour}:${_horario.minute}",
-                ),
-              ],
-            ),
-            SizedBox(height: 12),
-            Row(
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.timer),
-                  onPressed: () {
-                    _selectDateTime(context);
-                    // refreshes modal bottom sheet with new hour value
-                    setModalState(() {});
-                  },
-                ),
-                Text(
-                  _horario == null ? "Seleccione una fecha" : "not null",
-                ),
-              ],
-            ),
-            SizedBox(height: 12),
-            MaterialButton(
-              child: Text("Save"),
-              onPressed: () {
-                _todoTextController.clear();
-                _horario = null;
-              },
-            ),
-            SizedBox(
-              height: 24,
-            ),
-          ],
-        ),
       ),
     );
   }

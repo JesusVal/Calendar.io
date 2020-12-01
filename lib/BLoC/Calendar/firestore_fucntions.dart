@@ -70,17 +70,9 @@ class FirestoreConections {
   }
 
   void printTest() {
-    this
-        ._firestore
-        // .doc(this._firebaseUser)
-        // .where(this._firebaseUser,arrayContains: {'description': "13", 'time': "t3"})
-        .where("time", isEqualTo: "t36")
-        .get()
-        .then((elem) {
+    this._firestore.where("time", isEqualTo: "t36").get().then((elem) {
       print(elem.docs);
-    }
-            //  elem.docs.forEach((element) {print(element.data());})
-            ).catchError((e) => print('somethin failed: $e'));
+    }).catchError((e) => print('somethin failed: $e'));
     print('printing');
   }
 }

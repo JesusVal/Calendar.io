@@ -13,6 +13,7 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   CalendarController _calendarController;
   DateTime date = DateTime.now();
   Future<dynamic> getDataFunction;
@@ -45,6 +46,7 @@ class _CalendarState extends State<Calendar> {
     }
 
     return Scaffold(
+      key: _scaffoldKey,
       drawer: SideMenu(),
       appBar: AppBar(
         title: Text('Side menu'),
@@ -109,61 +111,229 @@ class _CalendarState extends State<Calendar> {
                               }
                               index -= 1;
 
-                              return Dismissible(
-                                key: UniqueKey(),
-                                background: Container(
-                                  color: Colors.indigo,
-                                  child: Icon(
-                                    Icons.delete,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                child: Container(
-                                  padding: EdgeInsets.only(top: 10),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Icon(
-                                        CupertinoIcons.check_mark_circled_solid,
-                                        color: Colors.red,
-                                        size: 30,
-                                      ),
-                                      Container(
+                              return GestureDetector(
+                                onDoubleTap: () async {
+                                  _todoTextController.text = snapshot
+                                      .data[0].docs[index]
+                                      .get('description');
+                                  _horario = TimeOfDay(
+                                      hour: int.parse(snapshot
+                                          .data[0].docs[index]
+                                          .get('time')
+                                          .split(":")[0]),
+                                      minute: int.parse(snapshot
+                                          .data[0].docs[index]
+                                          .get('time')
+                                          .split(":")[1]));
+                                  _fecha = DateTime(
+                                      int.parse(snapshot.data[0].docs[index]
+                                          .get('year')),
+                                      int.parse(snapshot.data[0].docs[index]
+                                          .get('month')),
+                                      int.parse(snapshot.data[0].docs[index]
+                                          .get('day')));
+
+                                  await showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) => StatefulBuilder(
+                                        // para refrescar la botton sheet en caso de ser necesario
+                                        builder: (context, setModalState) {
+                                      return Padding(
                                         padding: EdgeInsets.only(
-                                            left: 10, right: 10),
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.8,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              snapshot.data[0].docs[index]
-                                                  .get('time'),
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white),
-                                            ),
-                                            SizedBox(height: 10),
-                                            Text(
-                                              snapshot.data[0].docs[index]
-                                                  .get('description'),
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: Colors.white),
-                                            )
-                                          ],
+                                          top: 24.0,
+                                          left: 24,
+                                          right: 24,
+                                          bottom: MediaQuery.of(context)
+                                              .viewInsets
+                                              .bottom,
                                         ),
+                                        child: Container(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Text(
+                                                "Update event",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 24,
+                                              ),
+                                              TextField(
+                                                controller: _todoTextController,
+                                                decoration: InputDecoration(
+                                                  prefixIcon: Icon(
+                                                    Icons.text_fields,
+                                                    color: Colors.black,
+                                                  ),
+                                                  labelText: "Add activity",
+                                                  labelStyle: TextStyle(
+                                                      color: Colors.black87),
+                                                  border: OutlineInputBorder(),
+                                                  focusedBorder:
+                                                      OutlineInputBorder(),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 12,
+                                              ),
+                                              Row(
+                                                children: <Widget>[
+                                                  IconButton(
+                                                    icon: Icon(Icons.timer),
+                                                    onPressed: () {
+                                                      // refreshes modal bottom sheet with new hour value
+                                                      setState(() {
+                                                        _selectTime(context);
+                                                      });
+                                                    },
+                                                  ),
+                                                  Text(
+                                                    _horario == null
+                                                        ? "Select an hour"
+                                                        : (_horario.hour
+                                                                .toString() +
+                                                            ":" +
+                                                            _horario.minute
+                                                                .toString()),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: 12),
+                                              Row(
+                                                children: <Widget>[
+                                                  IconButton(
+                                                    icon: Icon(Icons.timer),
+                                                    onPressed: () {
+                                                      // refreshes modal bottom sheet with new hour value
+                                                      setState(() {
+                                                        _selectDateTime(
+                                                            context);
+                                                      });
+                                                    },
+                                                  ),
+                                                  Text(
+                                                    _fecha == null
+                                                        ? "Select a date"
+                                                        : (_fecha.year
+                                                                .toString() +
+                                                            "/" +
+                                                            _fecha.month
+                                                                .toString() +
+                                                            "/" +
+                                                            _fecha.day
+                                                                .toString()),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: 12),
+                                              MaterialButton(
+                                                child: Text("Save"),
+                                                onPressed: () {},
+                                              ),
+                                              SizedBox(
+                                                height: 24,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                                    isScrollControlled: true,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(15.0),
+                                        topRight: Radius.circular(15.0),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                onDismissed: (direction) {
-                                  _conecction.deleteEventCalendar(
-                                      snapshot.data[0].docs[index].get('uuid'));
+                                    ),
+                                  ).then(
+                                    (result) {
+                                      if (result != null) {
+                                        if (_todoTextController.text != '' &&
+                                            _horario != null &&
+                                            _fecha != null) {
+                                          var hourformat = _horario.hour;
+                                          var moniteformat = _horario.minute;
+                                          var formatedtime =
+                                              "$hourformat:$moniteformat";
+                                          _conecction.addEventCalendar(
+                                              _fecha.year.toString(),
+                                              _fecha.month.toString(),
+                                              _fecha.day.toString(),
+                                              _todoTextController.text,
+                                              formatedtime);
+                                          _todoTextController.clear();
+                                          _horario = null;
+                                          _fecha = null;
+                                          Navigator.of(context).pop();
+                                        }
+                                      }
+                                    },
+                                  );
                                 },
+                                child: Dismissible(
+                                  key: UniqueKey(),
+                                  background: Container(
+                                    color: Colors.indigo,
+                                    child: Icon(
+                                      Icons.delete,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  child: Container(
+                                    padding: EdgeInsets.only(top: 10),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Icon(
+                                          CupertinoIcons.alarm_fill,
+                                          color: Colors.redAccent,
+                                          size: 30,
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.only(
+                                              left: 10, right: 10),
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.8,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                snapshot.data[0].docs[index]
+                                                    .get('time'),
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white),
+                                              ),
+                                              SizedBox(height: 10),
+                                              Text(
+                                                snapshot.data[0].docs[index]
+                                                    .get('description'),
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color: Colors.white),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  onDismissed: (direction) {
+                                    _conecction.deleteEventCalendar(snapshot
+                                        .data[0].docs[index]
+                                        .get('uuid'));
+                                  },
+                                ),
                               );
                             },
                           );
@@ -181,6 +351,9 @@ class _CalendarState extends State<Calendar> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
+          _todoTextController.clear();
+          _horario = null;
+          _fecha = null;
           await showModalBottomSheet(
             context: context,
             builder: (context) => StatefulBuilder(
@@ -229,15 +402,20 @@ class _CalendarState extends State<Calendar> {
                           IconButton(
                             icon: Icon(Icons.timer),
                             onPressed: () {
-                              _selectTime(context);
                               // refreshes modal bottom sheet with new hour value
-                              setModalState(() {});
+                              setState(() {
+                                _selectTime(context);
+                              });
                             },
                           ),
                           Text(
                             _horario == null
                                 ? "Select an hour"
-                                : _horario.toString(),
+                                : (_horario.hour.toString() +
+                                    ":" +
+                                    (_horario.minute > 10
+                                        ? _horario.minute.toString()
+                                        : "0" + _horario.minute.toString())),
                           ),
                         ],
                       ),
@@ -247,15 +425,20 @@ class _CalendarState extends State<Calendar> {
                           IconButton(
                             icon: Icon(Icons.timer),
                             onPressed: () {
-                              _selectDateTime(context);
                               // refreshes modal bottom sheet with new hour value
-                              setModalState(() {});
+                              setState(() {
+                                _selectDateTime(context);
+                              });
                             },
                           ),
                           Text(
                             _fecha == null
                                 ? "Select a date"
-                                : _fecha.toString(),
+                                : (_fecha.year.toString() +
+                                    "/" +
+                                    _fecha.month.toString() +
+                                    "/" +
+                                    _fecha.day.toString()),
                           ),
                         ],
                       ),

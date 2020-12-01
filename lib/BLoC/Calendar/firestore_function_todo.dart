@@ -5,11 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-class FirestoreConections {
+class FirestoreConectionsTODO {
   CollectionReference _firestore;
   var _firebaseUser;
 
-  FirestoreConections(BuildContext context) {
+  FirestoreConectionsTODO(BuildContext context) {
     var user = context.watch<User>();
     this._firebaseUser = user.email;
     this._firestore = FirebaseFirestore.instance.collection(this._firebaseUser);
@@ -23,6 +23,7 @@ class FirestoreConections {
         .doc(uuid)
         .set({
           'uuid': uuid,
+          'type': 'task',
           'title': title,
           'description': description,
           'status': false,
@@ -52,7 +53,7 @@ class FirestoreConections {
   }
 
   Future getAllTasks() async {
-    return this._firestore.get();
+    return this._firestore.where('type', isEqualTo: 'task').get();
   }
 
   Future getAllTasksByStatus(status) async {

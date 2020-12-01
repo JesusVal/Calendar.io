@@ -1,3 +1,4 @@
+import 'package:Calendar_io/BLoC/Calendar/firestore_ducntion_notes.dart';
 import 'package:Calendar_io/Views/Calendar/side_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,8 @@ class _NotesListState extends State<NotesList> {
 
   @override
   Widget build(BuildContext context) {
+    FirestoreConectionsNotes _conecction = FirestoreConectionsNotes(context);
+
     return Scaffold(
       drawer: SideMenu(),
       appBar: AppBar(),
@@ -55,14 +58,91 @@ class _NotesListState extends State<NotesList> {
                 overflow: Overflow.visible,
                 children: <Widget>[
                   Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(40),
-                        topRight: Radius.circular(40),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(40),
+                          topRight: Radius.circular(40),
+                        ),
                       ),
-                    ),
-                    child: ListView.builder(
+                      child: FutureBuilder(
+                          future: _conecction.getAllNotes(),
+                          builder: (_, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                child: Text(
+                                  'Loading',
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              );
+                            } else {
+                              if (snapshot.data != null) {
+                                return ListView.builder(
+                                  controller: scrollController,
+                                  itemCount: snapshot.data.docs.length + 1,
+                                  itemBuilder: (context, index) {
+                                    if (index == 0) {
+                                      return Container(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 20, left: 20),
+                                          child: Text('Board',
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 30,
+                                                fontWeight: FontWeight.bold,
+                                              )),
+                                        ),
+                                      );
+                                    }
+                                    index -= 1;
+
+                                    return Dismissible(
+                                      key: UniqueKey(),
+                                      background: Container(
+                                        color: Colors.indigo,
+                                        child: Icon(
+                                          Icons.delete,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      child: ListTile(
+                                        subtitle: Text(
+                                          snapshot.data.docs[index].get('note'),
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.normal,
+                                              color: Colors.black),
+                                        ),
+                                        trailing: Icon(
+                                          CupertinoIcons.news,
+                                          color: Colors.green,
+                                          size: 30,
+                                        ),
+                                      ),
+                                      onDismissed: (direction) {
+                                        _conecction.deleteNote(snapshot
+                                            .data.docs[index]
+                                            .get('uuid'));
+                                      },
+                                    );
+                                  },
+                                );
+                              } else {
+                                return Center(
+                                  child: Text("No events found.",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.bold,
+                                      )),
+                                );
+                              }
+                            }
+                          })
+                      /*
+                    ListView.builder(
                       controller: scrollController,
                       itemCount: 20,
                       itemBuilder: (context, index) {
@@ -91,8 +171,8 @@ class _NotesListState extends State<NotesList> {
                           ),
                         );
                       },
-                    ),
-                  ),
+                    ),*/
+                      ),
                   Positioned(
                     top: -20,
                     right: 30,
@@ -101,10 +181,67 @@ class _NotesListState extends State<NotesList> {
                         await showModalBottomSheet(
                           context: context,
                           builder: (context) => StatefulBuilder(
-                            // para refrescar la botton sheet en caso de ser necesario
-                            builder: (context, setModalState) =>
-                                _bottomSheet(context, setModalState),
-                          ),
+                              // para refrescar la botton sheet en caso de ser necesario
+                              builder: (context, setModalState) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                top: 24.0,
+                                left: 24,
+                                right: 24,
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom,
+                              ),
+                              child: Container(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      "Add Note",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 24,
+                                    ),
+                                    TextField(
+                                      controller: _notesTextController,
+                                      decoration: InputDecoration(
+                                        prefixIcon: Icon(
+                                          Icons.text_fields,
+                                          color: Colors.black,
+                                        ),
+                                        labelText: "Tell me",
+                                        labelStyle:
+                                            TextStyle(color: Colors.black87),
+                                        border: OutlineInputBorder(),
+                                        focusedBorder: OutlineInputBorder(),
+                                      ),
+                                    ),
+                                    SizedBox(height: 12),
+                                    MaterialButton(
+                                      child: Text("Save"),
+                                      onPressed: () {
+                                        if (_notesTextController.text != '') {
+                                          _conecction.addTodoTask(
+                                              _notesTextController.text);
+                                          _notesTextController.clear();
+                                          Navigator.of(context).pop();
+                                        }
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height: 24,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+                              // _bottomSheet(context, setModalState),
+                              ),
                           isScrollControlled: true,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.only(

@@ -143,7 +143,9 @@ class _RegisterState extends State<Register> {
                   SizedBox(height: 20),
                   GestureDetector(
                     onTap: () {
-                      formBloc.createUser(context);
+                      setState(() {
+                        formBloc.createUser(context);
+                      });
                       Navigator.of(context).pop();
                       //TODO: resolve register
                       Navigator.pushNamed(context, '/login');

@@ -47,7 +47,7 @@ dev_dependencies:
   flutter_launcher_icons: ^0.8.1
 
 flutter_icons:
-  image_path: "assets/images/icon/appicon.png"
+  image_path: "assets/images/icon/purpleicon.png"
   android: true
   ios: true
 # For information on the generic Dart part of this file, see the

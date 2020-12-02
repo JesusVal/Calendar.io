@@ -28,17 +28,17 @@ class _ToDoListState extends State<ToDoList> {
         alignment: Alignment.center,
         children: <Widget>[
           Container(
-            height: 400,
+            height: MediaQuery.of(context).size.height,
             child: Stack(
               children: <Widget>[
-                // Positioned(
-                //     child: Container(
-                //   decoration: BoxDecoration(
-                //       image: DecorationImage(
-                //     image: AssetImage('assets/images/background.png'),
-                //     fit: BoxFit.fill,
-                //   )),
-                // )),
+                Positioned(
+                    child: Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                    image: AssetImage('assets/images/galaxy.png'),
+                    fit: BoxFit.fill,
+                  )),
+                )),
               ],
             ),
           ),

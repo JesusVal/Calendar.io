@@ -20,7 +20,7 @@ class SideMenu extends StatelessWidget {
                 color: Colors.deepPurple,
                 image: DecorationImage(
                     fit: BoxFit.fill,
-                    image: AssetImage('assets/images/background.png'))),
+                    image: AssetImage('assets/images/bluewindow.png'))),
           ),
           ListTile(
             leading: Icon(Icons.calendar_today),

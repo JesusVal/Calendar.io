@@ -15,6 +15,14 @@ class FirestoreConectionsNotes {
     this._firestore = FirebaseFirestore.instance.collection(this._firebaseUser);
   }
 
+  void addInitialNote(email) {
+    FirebaseFirestore.instance
+        .collection(email)
+        .add({"key": 'initialnote'})
+        .then((value) => print('initialnote'))
+        .catchError((onError) => print('kabloom!'));
+  }
+
   void addTodoTask(description) {
     var uid = Uuid();
     var uuid = uid.v4();
@@ -28,6 +36,11 @@ class FirestoreConectionsNotes {
         })
         .then((value) => print('Note added'))
         .catchError((e) {
+          this
+              ._firestore
+              .add({"key": 'initialnote'})
+              .then((value) => print('initialnote'))
+              .catchError((onError) => print('kabloom!'));
           print("Something went wrong in adding note: $e");
         });
   }

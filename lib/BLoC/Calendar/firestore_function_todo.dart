@@ -30,6 +30,11 @@ class FirestoreConectionsTODO {
         })
         .then((value) => print('Task added'))
         .catchError((e) {
+          this
+              ._firestore
+              .add({"key": 'initialnote'})
+              .then((value) => print('initialnote'))
+              .catchError((onError) => print('kabloom!'));
           print("Something went wrong in adding task: $e");
         });
   }

@@ -100,7 +100,7 @@ class _CalendarState extends State<Calendar> {
                                 return Container(
                                   child: Padding(
                                     padding: EdgeInsets.only(top: 20),
-                                    child: Text('Today',
+                                    child: Text('Events',
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 30,

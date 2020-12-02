@@ -233,7 +233,35 @@ class _CalendarState extends State<Calendar> {
                                               SizedBox(height: 12),
                                               MaterialButton(
                                                 child: Text("Save"),
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  if (_todoTextController
+                                                              .text !=
+                                                          '' &&
+                                                      _horario != null &&
+                                                      _fecha != null) {
+                                                    var hourformat =
+                                                        _horario.hour;
+                                                    var moniteformat =
+                                                        _horario.minute;
+                                                    var formatedtime =
+                                                        "$hourformat:$moniteformat";
+                                                    _conecction
+                                                        .addEventCalendar(
+                                                            _fecha.year
+                                                                .toString(),
+                                                            _fecha.month
+                                                                .toString(),
+                                                            _fecha.day
+                                                                .toString(),
+                                                            _todoTextController
+                                                                .text,
+                                                            formatedtime);
+                                                    _todoTextController.clear();
+                                                    _horario = null;
+                                                    _fecha = null;
+                                                    Navigator.of(context).pop();
+                                                  }
+                                                },
                                               ),
                                               SizedBox(
                                                 height: 24,
@@ -252,26 +280,7 @@ class _CalendarState extends State<Calendar> {
                                     ),
                                   ).then(
                                     (result) {
-                                      if (result != null) {
-                                        if (_todoTextController.text != '' &&
-                                            _horario != null &&
-                                            _fecha != null) {
-                                          var hourformat = _horario.hour;
-                                          var moniteformat = _horario.minute;
-                                          var formatedtime =
-                                              "$hourformat:$moniteformat";
-                                          _conecction.addEventCalendar(
-                                              _fecha.year.toString(),
-                                              _fecha.month.toString(),
-                                              _fecha.day.toString(),
-                                              _todoTextController.text,
-                                              formatedtime);
-                                          _todoTextController.clear();
-                                          _horario = null;
-                                          _fecha = null;
-                                          Navigator.of(context).pop();
-                                        }
-                                      }
+                                      if (result != null) {}
                                     },
                                   );
                                 },

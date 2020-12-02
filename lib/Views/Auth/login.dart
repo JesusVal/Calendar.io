@@ -122,7 +122,9 @@ class _LoginState extends State<Login> {
                   SizedBox(height: 40),
                   GestureDetector(
                     onTap: () {
-                      formBloc.loginBLoC(context);
+                      setState(() {
+                        formBloc.loginBLoC(context);
+                      });
                     },
                     child: Container(
                       height: 50,
